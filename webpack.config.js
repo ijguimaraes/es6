@@ -26,6 +26,14 @@ const config = {
           transpile: true,
         },
       },
+      {
+        loader: 'babel-loader',
+        test: /\.js$/,
+        exclude: /node_module/,
+        query: {
+          presets: ['es2015'],
+        },
+      },
     ],
   },
 };
