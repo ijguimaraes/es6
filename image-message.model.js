@@ -1,4 +1,4 @@
-var Message = require('./message.model');
+const Message = require('./message.model');
 
 class ImageMessage extends Message {
   constructor(text = '', created = Date.now(),
