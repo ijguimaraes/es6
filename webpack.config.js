@@ -2,11 +2,17 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+const UglifyJsWebpackPlugin = require('uglifyjs-webpack-plugin');
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
 
 const extractSass = new ExtractTextWebpackPlugin({
   filename: '[name].[contenthash:8].bundle.css',
   disable: false,
 });
+
+const minify = {
+  collapseWhitespace: true, conservativeCollapse: true, removeComments: true,
+};
 
 const config = {
   entry: {
@@ -23,11 +29,13 @@ const config = {
       name: 'commons',
       filename: 'commons.[hash:8].bundle.js',
       minChunks: 2,
+      minify,
     }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'app', 'index.html'),
       filename: 'index.html',
       chunks: ['main', 'commons'],
+      minify,
     }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'app', 'old-messages.html'),
@@ -35,6 +43,10 @@ const config = {
       chunks: ['oldMessages', 'commons'],
     }),
     extractSass,
+    new UglifyJsWebpackPlugin(),
+    new CompressionWebpackPlugin({
+      asset: '[path].gz',
+    }),
   ],
   module: {
     rules: [
@@ -52,7 +64,10 @@ const config = {
         test: /\.js$/,
         loader: 'babel-loader',
         options: {
-          presets: ['es2015'],
+          presets: [
+            'es2015',
+            { modules: false },
+          ],
         },
         exclude: /node_modules/,
       },
