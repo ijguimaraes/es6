@@ -9,15 +9,29 @@ const extractSass = new ExtractTextWebpackPlugin({
 });
 
 const config = {
-  entry: './app/index.js',
+  entry: {
+    main: './app/index.js', oldMessage: './app/old-messages.js',
+  },
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js',
+    filename: '[name].[hash:8].bunble.js',
     publicPath: '/',
   },
   plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'commons',
+      filename: 'commons.[hash:8].bundle.js',
+      minChunks: 2,
+    }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'app', 'index.html'),
+      filename: 'index.html',
+      chunks: ['main', 'commons'],
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'app', 'old-messages.html'),
+      filename: 'old-messages.html',
+      chunks: ['oldMessage', 'commons'],
     }),
     extractSass,
   ],
