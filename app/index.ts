@@ -10,7 +10,9 @@ console.dir(new Message());
 
 /* eslint no-undef: 0 */
 document.getElementById('send').onclick = () => {
-  const m = new Message(document.getElementById('message').value);
+  const m = new Message(
+    (<HTMLInputElement>document.getElementById('message')).value,
+  );
   document.getElementById('messages').innerHTML += template({
     m,
     relativeTime: moment(m.created).fromNow(),
